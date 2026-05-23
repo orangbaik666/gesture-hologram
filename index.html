@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Gesture Engine</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+
+
+    <div class="container">
+
+        <!-- LEFT SIDE -->
+        <div class="camera-section">
+            <div id="handAura" class="hand-aura"></div>
+
+            <video id="webcam" autoplay playsinline></video>
+
+            <canvas id="output"></canvas>
+            <canvas id="particles"></canvas>
+            <div id="virtualCursor"></div>
+
+            <div class="overlay">
+
+                <h1>AI GESTURE ENGINE</h1>
+
+                <p id="status">
+                    Initializing...
+                </p>
+
+                <div class="controls">
+
+                    <button id="recordBtn">
+                        RECORD GESTURE
+                    </button>
+
+                    <button id="mouseBtn">
+                        MOUSE MODE OFF
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="result-section">
+
+            <div id="hologram" class="hidden">
+
+                <div class="scanline"></div>
+
+                <div class="hologram-content">
+                    READY
+                </div>
+
+                <div class="corner corner-top-left"></div>
+                <div class="corner corner-top-right"></div>
+                <div class="corner corner-bottom-left"></div>
+                <div class="corner corner-bottom-right"></div>
+
+            </div>
+
+            <div id="gesturePanel">
+
+                <h2>SAVED GESTURES</h2>
+
+                <div id="gestureList"></div>
+
+            </div>
+
+            <div id="scannerPanel">
+
+                <h2>AI CONFIDENCE</h2>
+
+                <div class="confidence-bar">
+
+                    <div id="confidenceFill"></div>
+
+                </div>
+
+                <div id="confidenceText">
+                    0%
+                </div>
+
+                <div id="gestureMatch">
+                    MATCHING: NONE
+                </div>
+
+                <div id="aiStatus">
+                    STATUS: IDLE
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
