@@ -54,7 +54,8 @@ body {
 }
 
 #webcam,
-#output {
+#output,
+#particles {
     position: absolute;
 
     width: 100%;
@@ -662,5 +663,11 @@ button:hover {
 
     .hologram-content {
         font-size: 28px;
+    }
+
+    #webcam,
+    #output,
+    #particles {
+        object-fit: contain;
     }
 }
