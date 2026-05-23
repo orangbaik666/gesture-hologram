@@ -597,3 +597,70 @@ button:hover {
         opacity: 0.7;
     }
 }
+
+/* =========================
+   RESPONSIVE DESIGN FOR MOBILE
+========================= */
+@media screen and (max-width: 768px) {
+    body {
+        overflow: auto;
+    }
+
+    .container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .camera-section {
+        flex: none;
+        height: 60vh;
+        width: 100%;
+    }
+
+    .result-section {
+        width: 100%;
+        height: auto;
+        flex: none;
+        border-left: none;
+        border-top: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    .overlay h1 {
+        font-size: 20px;
+        top: 15px;
+        left: 15px;
+        letter-spacing: 2px;
+    }
+
+    .overlay p {
+        bottom: 15px;
+        left: 15px;
+        font-size: 14px;
+    }
+
+    .controls {
+        top: 15px;
+        right: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    #gesturePanel {
+        width: 100%;
+    }
+
+    #hologram {
+        min-height: 200px;
+    }
+
+    .hologram-content {
+        font-size: 28px;
+    }
+}

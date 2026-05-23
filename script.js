@@ -905,3 +905,9 @@ https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
 main();
 
 updateParticles();
+
+window.addEventListener('resize', () => {
+    if (video.videoWidth && video.videoHeight) {
+        resizeCanvas();
+    }
+});
