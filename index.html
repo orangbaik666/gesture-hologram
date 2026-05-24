@@ -44,6 +44,10 @@
                         MOUSE MODE OFF
                     </button>
 
+                    <button id="drawBtn">
+                        DRAW MODE OFF
+                    </button>
+
                 </div>
 
             </div>
@@ -65,6 +69,43 @@
                 <div class="corner corner-top-right"></div>
                 <div class="corner corner-bottom-left"></div>
                 <div class="corner corner-bottom-right"></div>
+
+            </div>
+
+            <!-- WHITEBOARD PANEL -->
+            <div id="whiteboardPanel" class="hidden">
+
+                <div class="wb-header">
+                    <h2>WHITEBOARD</h2>
+                    <button id="clearBoardBtn">CLEAR</button>
+                </div>
+
+                <div class="wb-canvas-wrapper">
+                    <canvas id="whiteboardCanvas"></canvas>
+                    <div id="wbCursor"></div>
+                </div>
+
+                <div class="wb-tools">
+
+                    <div class="wb-colors">
+                        <div class="wb-color active" data-color="#00ffff" style="background:#00ffff"></div>
+                        <div class="wb-color" data-color="#ff00ff" style="background:#ff00ff"></div>
+                        <div class="wb-color" data-color="#ffffff" style="background:#ffffff"></div>
+                        <div class="wb-color" data-color="#ffff00" style="background:#ffff00"></div>
+                        <div class="wb-color" data-color="#ff6b35" style="background:#ff6b35"></div>
+                    </div>
+
+                    <div class="wb-sizes">
+                        <button class="wb-size active" data-size="3">S</button>
+                        <button class="wb-size" data-size="7">M</button>
+                        <button class="wb-size" data-size="14">L</button>
+                    </div>
+
+                </div>
+
+                <div class="wb-hint">
+                    <span>👌 PINCH = DRAW &nbsp;|&nbsp; ✋ OPEN = LIFT</span>
+                </div>
 
             </div>
 
@@ -101,6 +142,8 @@
             </div>
 
         </div>
+
+        <div id="handAura"></div>
 
     </div>
 

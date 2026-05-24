@@ -600,11 +600,31 @@ button:hover {
 }
 
 /* =========================
-   RESPONSIVE DESIGN FOR MOBILE
+   RESPONSIVE — TABLET (max 1024px)
+========================= */
+@media screen and (max-width: 1024px) {
+    .result-section {
+        width: 300px;
+    }
+
+    .hologram-content {
+        font-size: 32px;
+    }
+
+    #gesturePanel {
+        width: 100%;
+    }
+}
+
+/* =========================
+   RESPONSIVE — MOBILE (max 768px)
 ========================= */
 @media screen and (max-width: 768px) {
+
+    /* ── Layout ── */
     body {
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .container {
@@ -613,61 +633,436 @@ button:hover {
         min-height: 100vh;
     }
 
+    /* ── Camera section ── */
     .camera-section {
         flex: none;
-        height: 60vh;
+        height: 55vw;
+        min-height: 240px;
+        max-height: 380px;
         width: 100%;
     }
 
+    #webcam,
+    #output,
+    #particles {
+        object-fit: cover;
+    }
+
+    /* ── Overlay & Title ── */
+    .overlay h1 {
+        font-size: 14px;
+        top: 10px;
+        left: 10px;
+        letter-spacing: 1px;
+    }
+
+    .overlay p#status {
+        bottom: 10px;
+        left: 10px;
+        font-size: 11px;
+    }
+
+    /* ── Control buttons ── */
+    .controls {
+        top: 10px;
+        right: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        pointer-events: auto;
+    }
+
+    button {
+        padding: 7px 10px;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    /* ── Right panel ── */
     .result-section {
         width: 100%;
         height: auto;
         flex: none;
         border-left: none;
         border-top: 1px solid rgba(0, 255, 255, 0.2);
+        padding: 14px;
+        gap: 14px;
     }
 
-    .overlay h1 {
-        font-size: 20px;
-        top: 15px;
-        left: 15px;
-        letter-spacing: 2px;
+    /* ── Hologram ── */
+    #hologram {
+        min-height: 140px;
     }
 
-    .overlay p {
-        bottom: 15px;
-        left: 15px;
-        font-size: 14px;
+    .hologram-content {
+        font-size: 24px;
+        letter-spacing: 3px;
     }
 
-    .controls {
-        top: 15px;
-        right: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    button {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-
+    /* ── Gesture panel ── */
     #gesturePanel {
         width: 100%;
     }
 
-    #hologram {
-        min-height: 200px;
+    /* ── Scanner panel ── */
+    #scannerPanel {
+        padding: 14px;
+    }
+
+    #scannerPanel h2 {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .confidence-bar {
+        height: 14px;
+        margin-bottom: 10px;
+    }
+
+    #confidenceText,
+    #gestureMatch,
+    #aiStatus {
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    /* ── Whiteboard panel ── */
+    #whiteboardPanel {
+        gap: 10px;
+    }
+
+    .wb-header h2 {
+        font-size: 14px;
+    }
+
+    .wb-header button {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+
+    .wb-canvas-wrapper {
+        min-height: 220px;
+    }
+
+    .wb-tools {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .wb-colors {
+        gap: 6px;
+    }
+
+    .wb-color {
+        width: 26px;
+        height: 26px;
+    }
+
+    .wb-sizes {
+        gap: 5px;
+    }
+
+    .wb-size {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .wb-hint {
+        font-size: 10px;
+        padding: 5px;
+    }
+
+    /* ── Cursors ── */
+    #virtualCursor {
+        width: 18px;
+        height: 18px;
+    }
+
+    #wbCursor {
+        width: 16px;
+        height: 16px;
+    }
+
+    #wbCursor.pinching {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* ── Hand aura ── */
+    .hand-aura {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* =========================
+   RESPONSIVE — SMALL PHONE (max 400px)
+========================= */
+@media screen and (max-width: 400px) {
+    .overlay h1 {
+        font-size: 11px;
+    }
+
+    button {
+        padding: 5px 8px;
+        font-size: 9px;
     }
 
     .hologram-content {
-        font-size: 28px;
+        font-size: 18px;
     }
 
-    #webcam,
-    #output,
-    #particles {
-        object-fit: contain;
+    .wb-canvas-wrapper {
+        min-height: 180px;
+    }
+
+    .wb-color {
+        width: 22px;
+        height: 22px;
     }
 }
+
+#handAura {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00ffff55, transparent);
+    box-shadow: 0 0 40px #00ffff;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    display: none;
+}
+
+/* =========================
+   WHITEBOARD PANEL
+========================= */
+
+#whiteboardPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+/* Override specificity: ID selector beats .hidden class */
+#whiteboardPanel.hidden {
+    display: none;
+}
+
+/* === WHITEBOARD SLIDE ANIMATIONS === */
+
+#whiteboardPanel.wb-enter {
+    animation: wbSlideIn 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+#whiteboardPanel.wb-leave {
+    animation: wbSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes wbSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes wbSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+}
+
+/* === PANEL FADE ANIMATIONS (gesture / scanner) === */
+
+.panel-enter {
+    animation: panelFadeIn 0.35s ease forwards;
+}
+
+.panel-leave {
+    animation: panelFadeOut 0.25s ease forwards;
+}
+
+@keyframes panelFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes panelFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+.wb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wb-header h2 {
+    color: #00ffff;
+    letter-spacing: 2px;
+    font-size: 18px;
+}
+
+.wb-header button {
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    background: rgba(255, 0, 76, 0.15);
+    border: 1px solid #ff004c;
+    color: #ff004c;
+    box-shadow: 0 0 10px rgba(255, 0, 76, 0.3);
+    cursor: pointer;
+}
+
+.wb-header button:hover {
+    background: rgba(255, 0, 76, 0.3);
+}
+
+.wb-canvas-wrapper {
+    position: relative;
+    flex: 1;
+    min-height: 300px;
+}
+
+#whiteboardCanvas {
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 2px;
+    background: #04060f;
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.1),
+        inset 0 0 40px rgba(0, 0, 0, 0.5);
+    cursor: crosshair;
+    display: block;
+}
+
+#wbCursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #00ffff;
+    box-shadow:
+        0 0 8px #00ffff,
+        0 0 16px #00ffff;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 10;
+    transition: width 0.1s, height 0.1s, background 0.1s, box-shadow 0.1s;
+}
+
+#wbCursor.pinching {
+    width: 12px;
+    height: 12px;
+    background: rgba(0, 255, 255, 0.6);
+    box-shadow:
+        0 0 16px #00ffff,
+        0 0 32px #00ffff;
+}
+
+.wb-tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 255, 255, 0.15);
+}
+
+.wb-colors {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.wb-color {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.wb-color:hover {
+    transform: scale(1.2);
+}
+
+.wb-color.active {
+    border-color: white;
+    transform: scale(1.25);
+    box-shadow: 0 0 8px currentColor;
+}
+
+.wb-sizes {
+    display: flex;
+    gap: 6px;
+}
+
+.wb-size {
+    padding: 4px 10px;
+    font-size: 11px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    background: transparent;
+    color: rgba(0, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: none;
+}
+
+.wb-size:hover {
+    background: rgba(0, 255, 255, 0.15);
+    color: #00ffff;
+}
+
+.wb-size.active {
+    background: rgba(0, 255, 255, 0.2);
+    color: #00ffff;
+    border-color: #00ffff;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+.wb-hint {
+    text-align: center;
+    color: rgba(0, 255, 255, 0.5);
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 6px;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    background: rgba(0, 255, 255, 0.03);
+}
+
+/* Draw mode indicator on virtualCursor */
+#virtualCursor.drawing {
+    background: radial-gradient(circle, rgba(0,255,255,0.5), transparent);
+    box-shadow:
+        0 0 30px #00ffff,
+        0 0 60px #00ffff;
+}
