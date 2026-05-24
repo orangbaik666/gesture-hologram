@@ -27,10 +27,14 @@ const whiteboardPanel = document.getElementById("whiteboardPanel");
 const whiteboardCanvas = document.getElementById("whiteboardCanvas");
 const clearBoardBtn = document.getElementById("clearBoardBtn");
 const wbCtx = whiteboardCanvas.getContext("2d");
-const wbCursor = document.getElementById("wbCursor");
+const wbCursor = document.getElementById("wbCursor"); 
 
 const gesturePanel = document.getElementById("gesturePanel");
 const scannerPanel = document.getElementById("scannerPanel");
+
+const videoPlayerPanel = document.getElementById("videoPlayerPanel");
+const specialVideoPlayer = document.getElementById("specialVideoPlayer");
+const closeVideoBtn = document.getElementById("closeVideoBtn");
 
 /* =========================
    STATE
@@ -49,6 +53,9 @@ let lastDrawX = null;
 let lastDrawY = null;
 let drawColor = "#00ffff";
 let drawSize = 3;
+
+let videoMode = false;
+const specialVideoGestureName = "Special Video Request"; 
 
 /* =========================
    JARVIS + SOUND
@@ -224,7 +231,7 @@ window.removeGesture = function (id) {
 recordBtn.onclick = () => {
     if (!latestLandmarks) return;
 
-    const name = prompt("Gesture name?");
+    const name = prompt(`Gesture name? (Use '${specialVideoGestureName}' for the video gesture)`, specialVideoGestureName);
     if (!name) return;
 
     savedGestures.push({
@@ -274,6 +281,41 @@ function resetUI() {
 }
 
 /* =========================
+   VIDEO FUNCTIONS
+========================= */
+
+function showSpecialVideo() {
+    if (videoMode) return; 
+
+    videoMode = true;
+    hologram.classList.add("hidden");
+    whiteboardPanel.classList.add("hidden"); 
+    [gesturePanel, scannerPanel].forEach(el => el.classList.add("hidden"));
+
+    videoPlayerPanel.classList.remove("hidden");
+    specialVideoPlayer.play();
+
+    jarvis.speak("Special request video detected. Playing now.");
+    statusText.innerText = "SPECIAL VIDEO MODE ACTIVE";
+}
+
+function hideSpecialVideo() {
+    videoMode = false;
+    specialVideoPlayer.pause();
+    specialVideoPlayer.currentTime = 0; 
+    videoPlayerPanel.classList.add("hidden");
+
+    [gesturePanel, scannerPanel].forEach(el => el.classList.remove("hidden"));
+
+    jarvis.speak("Video closed. Gestures system reactivated.");
+    statusText.innerText = "HAND DETECTED";
+}
+
+closeVideoBtn.onclick = hideSpecialVideo;
+specialVideoPlayer.addEventListener('ended', hideSpecialVideo);
+
+
+/* =========================
    DETECTION ENGINE
 ========================= */
 
@@ -283,10 +325,9 @@ function onResults(results) {
     if (!results.multiHandLandmarks) {
         statusText.innerText = "Scanning...";
         resetUI();
-        hologram.classList.add("hidden");
+        if (!videoMode) hologram.classList.add("hidden"); 
         latestLandmarks = null;
-
-        lastSoundState = null; // reset audio state
+        lastSoundState = null;
         return;
     }
 
@@ -302,13 +343,13 @@ function onResults(results) {
         const index = landmarks[8];
         const palm = landmarks[9];
 
-        handAura.style.left = `${palm.x * canvas.width}px`;
+        handAura.style.left = `${(1 - palm.x) * canvas.width}px`; 
         handAura.style.top = `${palm.y * canvas.height}px`;
 
         if (mouseMode) {
             const rect = document.querySelector(".camera-section").getBoundingClientRect();
 
-            const targetX = (1 - index.x) * rect.width; // flip X karena video di-mirror
+            const targetX = (1 - index.x) * rect.width; 
             const targetY = index.y * rect.height;
 
             smoothX += (targetX - smoothX) * 0.25;
@@ -326,19 +367,15 @@ function onResults(results) {
             const thumbTip = landmarks[4];
             const indexTip = landmarks[8];
 
-            // Jarak antara ujung ibu jari dan jari telunjuk
             const pinchDist = Math.sqrt(
                 (thumbTip.x - indexTip.x) ** 2 +
                 (thumbTip.y - indexTip.y) ** 2
             );
             const isPinching = pinchDist < 0.06;
 
-            // Posisi titik gambar = midpoint antara thumb & index, flip X
             const wbX = (1 - (thumbTip.x + indexTip.x) / 2) * whiteboardCanvas.width;
             const wbY = ((thumbTip.y + indexTip.y) / 2) * whiteboardCanvas.height;
 
-            // Update posisi wbCursor (dalam % agar sesuai CSS layout)
-            const wbRect = whiteboardCanvas.getBoundingClientRect();
             const cursorPercX = (wbX / whiteboardCanvas.width) * 100;
             const cursorPercY = (wbY / whiteboardCanvas.height) * 100;
             wbCursor.style.left = `${cursorPercX}%`;
@@ -389,7 +426,27 @@ function onResults(results) {
         });
 
         /* =========================
-           GESTURE CHECK
+           VIDEO GESTURE CHECK
+        ========================= */
+
+        let specialGestureFound = false;
+
+        for (const g of savedGestures) {
+            if (g.name === specialVideoGestureName && compareGestures(landmarks, g.landmarks)) {
+                specialGestureFound = true;
+                break;
+            }
+        }
+
+        if (specialGestureFound) {
+            showSpecialVideo();
+            return; 
+        }
+
+        if (videoMode) return; 
+
+        /* =========================
+           REGULAR GESTURE CHECK
         ========================= */
 
         for (const g of savedGestures) {
@@ -408,18 +465,11 @@ function onResults(results) {
                 statusText.innerText = `${g.name} DETECTED`;
 
                 jarvis.detect(`${g.name} detected`);
-
                 break;
             }
         }
 
-        /* =========================
-           🔥 IMPORTANT FIX AREA
-        ========================= */
-
         if (best && detected) {
-
-            // ✅ ONLY WHEN MATCH SUCCESS
             confidenceFill.style.width = `${bestScore}%`;
             confidenceText.innerText = `${bestScore}%`;
             gestureMatch.innerText = best.name;
@@ -432,14 +482,11 @@ function onResults(results) {
             playThresholdSound(bestScore);
         }
         else {
-
-            // ❌ NO MATCH = RESET TOTAL
             confidenceFill.style.width = "0%";
             confidenceText.innerText = "0%";
             gestureMatch.innerText = "NONE";
             aiStatus.innerText = "IDLE";
 
-            // Tampilkan notifikasi error dan suara omongan jika ada gesture tersimpan tapi tidak cocok
             if (savedGestures.length > 0) {
                 statusText.innerText = "GESTURE NOT DETECTED";
                 hologramContent.innerText = "❌ NOT DETECTED";
@@ -451,7 +498,7 @@ function onResults(results) {
                 }
             } else {
                 hologram.classList.add("hidden");
-                lastSoundState = null; // stop audio state
+                lastSoundState = null;
             }
         }
     }
@@ -463,7 +510,6 @@ function onResults(results) {
 
 mouseBtn.onclick = () => {
     mouseMode = !mouseMode;
-
     mouseBtn.innerText = mouseMode ? "MOUSE ON" : "MOUSE OFF";
     virtualCursor.style.display = mouseMode ? "block" : "none";
 };
@@ -473,7 +519,6 @@ mouseBtn.onclick = () => {
 ========================= */
 
 function initWhiteboard() {
-    // Set canvas resolution to match its CSS size
     whiteboardCanvas.width = whiteboardCanvas.offsetWidth;
     whiteboardCanvas.height = whiteboardCanvas.offsetHeight;
     wbCtx.fillStyle = "#04060f";
@@ -481,12 +526,13 @@ function initWhiteboard() {
 }
 
 drawBtn.onclick = () => {
+    if (videoMode) hideSpecialVideo(); 
+
     drawMode = !drawMode;
     drawBtn.innerText = drawMode ? "DRAW MODE ON" : "DRAW MODE OFF";
     hologram.classList.add("hidden");
 
     if (drawMode) {
-        // Animasikan gesturePanel & scannerPanel keluar
         [gesturePanel, scannerPanel].forEach(el => {
             el.classList.add("panel-leave");
             el.addEventListener("animationend", () => {
@@ -495,10 +541,9 @@ drawBtn.onclick = () => {
             }, { once: true });
         });
 
-        // Tampilkan whiteboard dengan animasi masuk
         whiteboardPanel.classList.remove("hidden");
         whiteboardPanel.classList.remove("wb-leave");
-        void whiteboardPanel.offsetWidth; // force reflow
+        void whiteboardPanel.offsetWidth; 
         whiteboardPanel.classList.add("wb-enter");
         whiteboardPanel.addEventListener("animationend", () => {
             whiteboardPanel.classList.remove("wb-enter");
@@ -509,7 +554,6 @@ drawBtn.onclick = () => {
         jarvis.speak("Draw mode activated. Pinch to draw.");
 
     } else {
-        // Animasikan whiteboard keluar
         whiteboardPanel.classList.remove("wb-enter");
         whiteboardPanel.classList.add("wb-leave");
         whiteboardPanel.addEventListener("animationend", () => {
@@ -517,11 +561,10 @@ drawBtn.onclick = () => {
             whiteboardPanel.classList.remove("wb-leave");
         }, { once: true });
 
-        // Tampilkan gesture/scanner panels dengan animasi masuk
         [gesturePanel, scannerPanel].forEach(el => {
             el.classList.remove("hidden");
             el.classList.remove("panel-leave");
-            void el.offsetWidth; // force reflow
+            void el.offsetWidth; 
             el.classList.add("panel-enter");
             el.addEventListener("animationend", () => {
                 el.classList.remove("panel-enter");
@@ -543,7 +586,6 @@ clearBoardBtn.onclick = () => {
     wbCtx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
 };
 
-// Color swatches
 document.querySelectorAll(".wb-color").forEach(el => {
     el.addEventListener("click", () => {
         document.querySelectorAll(".wb-color").forEach(e => e.classList.remove("active"));
@@ -552,7 +594,6 @@ document.querySelectorAll(".wb-color").forEach(el => {
     });
 });
 
-// Size buttons
 document.querySelectorAll(".wb-size").forEach(el => {
     el.addEventListener("click", () => {
         document.querySelectorAll(".wb-size").forEach(e => e.classList.remove("active"));
@@ -584,7 +625,11 @@ async function main() {
 
     const camera = new Camera(video, {
         onFrame: async () => {
-            await hands.send({ image: video });
+            // 👉 TAMBAHKAN LOGIKA INI: 
+            // Hanya jalankan deteksi AI jika videoMode sedang false (mati)
+            if (!videoMode) {
+                await hands.send({ image: video });
+            }
         },
         width: 1280,
         height: 720
